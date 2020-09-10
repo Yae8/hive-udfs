@@ -99,7 +99,7 @@ public class ArrayMean extends ArrayMetricBase {
             }
             HiveDecimal value = PrimitiveObjectInspectorUtils.getHiveDecimal(listOI.getListElement(list, i), elementOI);
             count += 1;
-            sum.add(value);
+            sum = sum.add(value);
         }
         if (count == 0) {
             return null;
