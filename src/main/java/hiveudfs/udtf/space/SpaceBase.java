@@ -42,6 +42,7 @@ abstract class SpaceBase extends GenericUDTF {
                     case DECIMAL:
                     case FLOAT:
                     case DOUBLE:
+                    case VOID:
                         break;
                     default:
                         throw new UDFArgumentTypeException(i, "Argument " + (i + 1) + " of function " + getFuncName() + " must be " +
@@ -79,26 +80,36 @@ abstract class SpaceBase extends GenericUDTF {
 
     @Override
     public void process(Object[] args) throws HiveException {
-        Double start;
-        Double stop;
-        int num;
+        Double start = null;
+        Double stop = null;
+        int num = 50;
 
         switch (args.length) {
             case 2:
-                start = ((DoubleWritable) converters[0].convert(args[0])).get();
-                stop = ((DoubleWritable) converters[1].convert(args[1])).get();
-                num = 50;
+                if (args[0] != null) {
+                    start = ((DoubleWritable) converters[0].convert(args[0])).get();
+                }
+                if (args[1] != null) {
+                    stop = ((DoubleWritable) converters[1].convert(args[1])).get();
+                }
                 break;
             case 3:
-                start = ((DoubleWritable) converters[0].convert(args[0])).get();
-                stop = ((DoubleWritable) converters[1].convert(args[1])).get();
-                num = ((IntWritable) converters[2].convert(args[2])).get();
+                if (args[0] != null) {
+                    start = ((DoubleWritable) converters[0].convert(args[0])).get();
+                }
+                if (args[1] != null) {
+                    stop = ((DoubleWritable) converters[1].convert(args[1])).get();
+                }
+                if (args[2] != null) {
+                    num = ((IntWritable) converters[2].convert(args[2])).get();
+                }
                 break;
             default:
                 throw new UDFArgumentLengthException("The function" + getFuncName() + " accepts one to three arguments");
         }
-        if (start == null | stop == null) {
 
+        if (start == null | stop == null) {
+            return;
         }
         if (num == 0) {
             throw new UDFArgumentException("Argument " + 3 + " of function " + getFuncName() + " must not be zero.");
