@@ -2,7 +2,10 @@ package hiveudfs.udtf.collections;
 
 import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.udf.generic.Collector;
-import org.apache.hadoop.hive.serde2.objectinspector.*;
+import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
+import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory;
+import org.apache.hadoop.hive.serde2.objectinspector.StandardListObjectInspector;
+import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,14 +14,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class CombinationsTest {
-    private Combinations udtf;
+public class PermutationsTest {
+    private Permutations udtf;
 
     @Before
     public void before() {
-        udtf = new Combinations();
+        udtf = new Permutations();
     }
 
     @Test
@@ -42,13 +46,43 @@ public class CombinationsTest {
 
         actual.clear();
         udtf.process(new Object[] {new ArrayList<>(Arrays.asList(1, 2, 3))});
-        assertEquals(1, actual.size());
+        assertEquals(6, actual.size());
 
         list = (List<Integer>) listOI.getList(actual.get(0));
         assertEquals(3, list.size());
         assertTrue(list.contains(1));
         assertTrue(list.contains(2));
         assertTrue(list.contains(3));
+
+        list = (List<Integer>) listOI.getList(actual.get(1));
+        assertEquals(3, list.size());
+        assertTrue(list.contains(1));
+        assertTrue(list.contains(3));
+        assertTrue(list.contains(2));
+
+        list = (List<Integer>) listOI.getList(actual.get(2));
+        assertEquals(3, list.size());
+        assertTrue(list.contains(2));
+        assertTrue(list.contains(1));
+        assertTrue(list.contains(3));
+
+        list = (List<Integer>) listOI.getList(actual.get(3));
+        assertEquals(3, list.size());
+        assertTrue(list.contains(2));
+        assertTrue(list.contains(3));
+        assertTrue(list.contains(1));
+
+        list = (List<Integer>) listOI.getList(actual.get(4));
+        assertEquals(3, list.size());
+        assertTrue(list.contains(3));
+        assertTrue(list.contains(1));
+        assertTrue(list.contains(2));
+
+        list = (List<Integer>) listOI.getList(actual.get(5));
+        assertEquals(3, list.size());
+        assertTrue(list.contains(3));
+        assertTrue(list.contains(2));
+        assertTrue(list.contains(1));
     }
 
     @Test
@@ -74,7 +108,7 @@ public class CombinationsTest {
 
         actual.clear();
         udtf.process(new Object[] {new ArrayList<>(Arrays.asList(1, 2, 3)), 2});
-        assertEquals(3, actual.size());
+        assertEquals(6, actual.size());
 
         list = (List<Integer>) listOI.getList(actual.get(0));
         assertEquals(2, list.size());
@@ -89,6 +123,21 @@ public class CombinationsTest {
         list = (List<Integer>) listOI.getList(actual.get(2));
         assertEquals(2, list.size());
         assertTrue(list.contains(2));
+        assertTrue(list.contains(1));
+
+        list = (List<Integer>) listOI.getList(actual.get(3));
+        assertEquals(2, list.size());
+        assertTrue(list.contains(2));
         assertTrue(list.contains(3));
+
+        list = (List<Integer>) listOI.getList(actual.get(4));
+        assertEquals(2, list.size());
+        assertTrue(list.contains(3));
+        assertTrue(list.contains(1));
+
+        list = (List<Integer>) listOI.getList(actual.get(5));
+        assertEquals(2, list.size());
+        assertTrue(list.contains(3));
+        assertTrue(list.contains(2));
     }
 }
