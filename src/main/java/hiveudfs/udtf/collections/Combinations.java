@@ -13,6 +13,7 @@ import org.apache.hadoop.io.IntWritable;
 
 import java.util.*;
 
+
 public class Combinations extends GenericUDTF {
     private transient ObjectInspector[] inputOIs;
     protected transient ObjectInspectorConverters.Converter converter;
@@ -83,10 +84,10 @@ public class Combinations extends GenericUDTF {
         if (r == 0) {
             return;
         }
-        combination(list, r, new ArrayList<>());
+        combinations(list, r, new ArrayList<>());
     }
 
-    private void combination(List<Object> candidates, int r, List<Object> selected) throws HiveException {
+    private void combinations(List<Object> candidates, int r, List<Object> selected) throws HiveException {
         if (candidates.size() < r) {
             return;
         }
@@ -101,7 +102,7 @@ public class Combinations extends GenericUDTF {
             ArrayList<Object> newSelected = new ArrayList<>(selected);
             newSelected.add(candidates.get(i));
             if (r > 1) {
-                combination(candidates.subList(i + 1, candidates.size()), r - 1, newSelected);
+                combinations(candidates.subList(i + 1, candidates.size()), r - 1, newSelected);
             } else {
                 forwardObjects[0] = newSelected;
                 forward(forwardObjects);
