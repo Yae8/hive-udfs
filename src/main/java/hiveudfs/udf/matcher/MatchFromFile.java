@@ -12,6 +12,7 @@ import org.apache.hadoop.hive.serde.serdeConstants;
 import org.apache.hadoop.hive.serde2.objectinspector.ConstantObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector.Category;
+import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorUtils;
 import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector.PrimitiveCategory;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
@@ -45,15 +46,18 @@ public class MatchFromFile extends GenericUDF {
                         ", but " + primOIs[i].getTypeName() + ".");
             }
         }
-        if (arguments[1] instanceof ConstantObjectInspector) {
-            String pathname = ((ConstantObjectInspector) arguments[1]).getWritableConstantValue().toString();
-            try {
-                data = Reader.readTsv(pathname);
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new UDFArgumentException("The file " + pathname + " not found");
-            }
+        if (!ObjectInspectorUtils.isConstantObjectInspector(arguments[1])) {
+            throw new UDFArgumentTypeException(1, "Argument " + 2 + " of function must be a constant string" +
+                    ", but " + arguments[1].toString() + "was given");
         }
+        String pathname = ((ConstantObjectInspector) arguments[1]).getWritableConstantValue().toString();
+        try {
+            data = Reader.readTsv(pathname);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new UDFArgumentException("The file " + pathname + " not found");
+        }
+
         return PrimitiveObjectInspectorFactory.writableStringObjectInspector;
     }
 
@@ -68,13 +72,7 @@ public class MatchFromFile extends GenericUDF {
         }
 
         if (data == null) {
-            String uri = arguments[1].get().toString();
-            try {
-                data = Reader.readTsv(uri);
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new UDFArgumentException("The file " + uri + " not found");
-            }
+            throw new HiveException("Failed to read the file");
         }
 
         String str = arguments[0].get().toString();
