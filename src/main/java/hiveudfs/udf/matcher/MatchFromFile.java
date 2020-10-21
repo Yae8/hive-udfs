@@ -1,6 +1,8 @@
 package hiveudfs.udf.matcher;
 
+import hiveudfs.utils.PatternMatcher;
 import hiveudfs.utils.Read;
+import hiveudfs.utils.SetMatcher;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentLengthException;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentTypeException;
@@ -22,6 +24,8 @@ import java.util.List;
 
 public class MatchFromFile extends GenericUDF {
     protected transient List<String[]> data;
+    private final PatternMatcher patternMatcher = new PatternMatcher();
+    private final SetMatcher setMatcher = new SetMatcher();
 
     @Override
     public ObjectInspector initialize(ObjectInspector[] arguments) throws UDFArgumentException {
@@ -78,25 +82,43 @@ public class MatchFromFile extends GenericUDF {
 
         String str = arguments[0].get().toString();
         for (String[] row : data) {
-            String regex;
-            String originStr = row[0];
+            boolean isMatch;
+            MatchMethodEnum matchMethodEnum;
             if (row.length > 1) {
-                if ("1".equals(row[1])) {
-                    regex = "^" + originStr + "$";
-                } else if ("2".equals(row[1])) {
-                    regex = ".*" + originStr + ".*";
-                } else if ("3".equals(row[1])) {
-                    regex = ".*" + originStr + "$";
-                } else if ("4".equals(row[1])) {
-                    regex = "^"+ originStr + ".*";
-                } else {
-                    throw new HiveException("The match type " + originStr + " unsupported");
+                matchMethodEnum = MatchMethodEnum.findByNum(Integer.parseInt(row[1]));
+                if (matchMethodEnum == null) {
+                    throw new HiveException("The match type " + row[1] + " unsupported");
                 }
             } else {
-                regex = originStr;
+                matchMethodEnum = MatchMethodEnum.PERFECT;
             }
-            if (str.matches(regex)) {
-                return new Text(originStr);
+            switch (matchMethodEnum) {
+                case PERFECT:
+                    isMatch = PatternMatcher.isPerfectMatch(str, row[0]);
+                    break;
+                case PARTIAL:
+                    isMatch = PatternMatcher.isPartialMatch(str, row[0]);
+                    break;
+                case SUFFIX:
+                    isMatch = PatternMatcher.isSuffixMatch(str, row[0]);
+                    break;
+                case PREFIX:
+                    isMatch = PatternMatcher.isPrefixMatch(str, row[0]);
+                    break;
+                case SUBSET:
+                    isMatch = SetMatcher.isSubset(str.split(" "), row[0].split(" "));
+                    break;
+                case SUPERSET:
+                    isMatch = SetMatcher.isSuperset(str.split(" "), row[0].split(" "));
+                    break;
+                case NO_PARTICULAR_ORDER:
+                    isMatch = SetMatcher.isEqual(str.split(" "), row[0].split(" "));
+                    break;
+                default:
+                    throw new HiveException("The match type " + row[1] + " unsupported");
+            }
+            if (isMatch) {
+                return new Text(row[0]);
             }
         }
         return null;
