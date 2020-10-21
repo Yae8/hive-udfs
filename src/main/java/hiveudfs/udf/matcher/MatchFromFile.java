@@ -1,7 +1,7 @@
 package hiveudfs.udf.matcher;
 
 import hiveudfs.utils.PatternMatcher;
-import hiveudfs.utils.Read;
+import hiveudfs.utils.Reader;
 import hiveudfs.utils.SetMatcher;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentLengthException;
@@ -51,7 +51,7 @@ public class MatchFromFile extends GenericUDF {
         if (arguments[1] instanceof ConstantObjectInspector) {
             String pathname = ((ConstantObjectInspector) arguments[1]).getWritableConstantValue().toString();
             try {
-                data = Read.readTsv(pathname);
+                data = Reader.readTsv(pathname);
             } catch (IOException e) {
                 e.printStackTrace();
                 throw new UDFArgumentException("The file " + pathname + " not found");
@@ -73,7 +73,7 @@ public class MatchFromFile extends GenericUDF {
         if (data == null) {
             String uri = arguments[1].get().toString();
             try {
-                data = Read.readTsv(uri);
+                data = Reader.readTsv(uri);
             } catch (IOException e) {
                 e.printStackTrace();
                 throw new UDFArgumentException("The file " + uri + " not found");
