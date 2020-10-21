@@ -7,6 +7,8 @@ import org.apache.hadoop.hive.ql.udf.generic.GenericUDF.DeferredObject;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.StringObjectInspector;
+import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
+import org.apache.hadoop.io.Text;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,7 +17,8 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class MatchFromFileTest {
     private MatchFromFile udf;
@@ -59,7 +62,9 @@ public class MatchFromFileTest {
     public void testEvaluateWithPatternMatcher() throws Exception {
         StringObjectInspector resultOI = (StringObjectInspector) udf.initialize(new ObjectInspector[]{
                 PrimitiveObjectInspectorFactory.writableStringObjectInspector,
-                PrimitiveObjectInspectorFactory.writableStringObjectInspector});
+                PrimitiveObjectInspectorFactory.getPrimitiveWritableConstantObjectInspector(
+                        TypeInfoFactory.stringTypeInfo,
+                        new Text(uri1))});
         Object result;
 
         // No match
@@ -91,7 +96,9 @@ public class MatchFromFileTest {
     public void testEvaluateWithSetMatcher() throws Exception {
         StringObjectInspector resultOI = (StringObjectInspector) udf.initialize(new ObjectInspector[]{
                 PrimitiveObjectInspectorFactory.writableStringObjectInspector,
-                PrimitiveObjectInspectorFactory.writableStringObjectInspector});
+                PrimitiveObjectInspectorFactory.getPrimitiveWritableConstantObjectInspector(
+                        TypeInfoFactory.stringTypeInfo,
+                        new Text(uri2))});
         Object result;
 
         // No match
