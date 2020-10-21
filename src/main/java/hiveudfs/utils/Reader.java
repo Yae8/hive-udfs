@@ -1,6 +1,5 @@
 package hiveudfs.utils;
 
-
 import com.google.common.base.Joiner;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
@@ -12,7 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.List;
 
 public class Reader {
     protected static CsvParserSettings csvParserSettings = new CsvParserSettings();

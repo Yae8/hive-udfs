@@ -21,11 +21,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class MatchFromFile extends GenericUDF {
     protected transient List<String[]> data;
-    private final PatternMatcher patternMatcher = new PatternMatcher();
-    private final SetMatcher setMatcher = new SetMatcher();
 
     @Override
     public ObjectInspector initialize(ObjectInspector[] arguments) throws UDFArgumentException {
