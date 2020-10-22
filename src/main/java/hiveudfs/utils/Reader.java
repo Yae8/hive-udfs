@@ -1,7 +1,6 @@
 package hiveudfs.utils;
 
 import com.google.common.base.Joiner;
-import com.sun.tools.javac.comp.Lower;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
 import com.univocity.parsers.tsv.TsvParser;
@@ -24,7 +23,7 @@ public class Reader {
     protected static CsvParser csvParser;
     protected static TsvParser tsvParser;
 
-    private static Log logger = LogFactory.getLog(Lower.class);
+    private static Log logger = LogFactory.getLog(Reader.class);
 
     private static BufferedReader getReader(String uri) throws IOException {
         Path uriPath = Paths.get(uri);
