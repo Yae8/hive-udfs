@@ -60,71 +60,73 @@ public class MatchFromFileTest {
 
     @Test
     public void testEvaluateWithPatternMatcher() throws Exception {
+        Text text = new Text(uri1);
         StringObjectInspector resultOI = (StringObjectInspector) udf.initialize(new ObjectInspector[]{
-                PrimitiveObjectInspectorFactory.writableStringObjectInspector,
+                PrimitiveObjectInspectorFactory.javaStringObjectInspector,
                 PrimitiveObjectInspectorFactory.getPrimitiveWritableConstantObjectInspector(
                         TypeInfoFactory.stringTypeInfo,
-                        new Text(uri1))});
+                        text)});
         Object result;
 
         // No match
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("zaaz"), new DeferredJavaObject(uri1)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("zaaz"), new DeferredJavaObject(text)});
         assertNull(resultOI.getPrimitiveJavaObject(result));
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("ccz"), new DeferredJavaObject(uri1)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("ccz"), new DeferredJavaObject(text)});
         assertNull(resultOI.getPrimitiveJavaObject(result));
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("zdd"), new DeferredJavaObject(uri1)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("zdd"), new DeferredJavaObject(text)});
         assertNull(resultOI.getPrimitiveJavaObject(result));
 
         // Perfect match
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("aa"), new DeferredJavaObject(uri1)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("aa"), new DeferredJavaObject(text)});
         assertEquals("aa", resultOI.getPrimitiveJavaObject(result));
 
         // Partial match
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("zbbz"), new DeferredJavaObject(uri1)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("zbbz"), new DeferredJavaObject(text)});
         assertEquals("bb", resultOI.getPrimitiveJavaObject(result));
 
         // Suffix match
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("zcc"), new DeferredJavaObject(uri1)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("zcc"), new DeferredJavaObject(text)});
         assertEquals("cc", resultOI.getPrimitiveJavaObject(result));
 
         // Prefix match
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("ddz"), new DeferredJavaObject(uri1)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("ddz"), new DeferredJavaObject(text)});
         assertEquals("dd", resultOI.getPrimitiveJavaObject(result));
     }
 
     @Test
     public void testEvaluateWithSetMatcher() throws Exception {
+        Text text = new Text(uri2);
         StringObjectInspector resultOI = (StringObjectInspector) udf.initialize(new ObjectInspector[]{
-                PrimitiveObjectInspectorFactory.writableStringObjectInspector,
+                PrimitiveObjectInspectorFactory.javaStringObjectInspector,
                 PrimitiveObjectInspectorFactory.getPrimitiveWritableConstantObjectInspector(
                         TypeInfoFactory.stringTypeInfo,
-                        new Text(uri2))});
+                        text)});
         Object result;
 
         // No match
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("a b c"), new DeferredJavaObject(uri2)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("a b c"), new DeferredJavaObject(text)});
         assertNull(resultOI.getPrimitiveJavaObject(result));
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("xx yy zz"), new DeferredJavaObject(uri2)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("xx yy zz"), new DeferredJavaObject(text)});
         assertNull(resultOI.getPrimitiveJavaObject(result));
 
         // Subset match
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("aa"), new DeferredJavaObject(uri2)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("aa"), new DeferredJavaObject(text)});
         assertEquals("aa bb cc", resultOI.getPrimitiveJavaObject(result));
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("aa bb"), new DeferredJavaObject(uri2)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("aa bb"), new DeferredJavaObject(text)});
         assertEquals("aa bb cc", resultOI.getPrimitiveJavaObject(result));
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("cc aa"), new DeferredJavaObject(uri2)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("cc aa"), new DeferredJavaObject(text)});
         assertEquals("aa bb cc", resultOI.getPrimitiveJavaObject(result));
 
         // Superset match
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("bb cc dd ee"), new DeferredJavaObject(uri2)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("bb cc dd ee"), new DeferredJavaObject(text)});
         assertEquals("bb cc dd", resultOI.getPrimitiveJavaObject(result));
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("aa dd cc bb ee"), new DeferredJavaObject(uri2)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("aa dd cc bb ee"), new DeferredJavaObject(text)});
         assertEquals("bb cc dd", resultOI.getPrimitiveJavaObject(result));
 
         // No particular order match
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("cc dd ee"), new DeferredJavaObject(uri2)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("cc dd ee"), new DeferredJavaObject(text)});
         assertEquals("cc dd ee", resultOI.getPrimitiveJavaObject(result));
-        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("dd ee cc"), new DeferredJavaObject(uri2)});
+        result = udf.evaluate(new DeferredObject[]{new DeferredJavaObject("dd ee cc"), new DeferredJavaObject(text)});
         assertEquals("cc dd ee", resultOI.getPrimitiveJavaObject(result));
     }
 }
