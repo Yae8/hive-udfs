@@ -18,8 +18,13 @@ public class CountFreq extends CounterBase {
     static final Logger LOG = LoggerFactory.getLogger(CountFreq.class.getName());
 
     @Override
-    public GenericUDAFEvaluator getEvaluator(TypeInfo[] parameters) throws SemanticException {
+    protected GenericUDAFEvaluator getMyEvaluator() {
         return new CountFreqEvaluator();
+    }
+
+    @Override
+    public GenericUDAFEvaluator getEvaluator(TypeInfo[] parameters) throws SemanticException {
+        return super.getEvaluator(parameters);
     }
 
     public static class CountFreqEvaluator extends CounterEvaluatorBase {

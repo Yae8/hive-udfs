@@ -19,6 +19,8 @@ abstract class CounterBase extends AbstractGenericUDAFResolver {
 
     static final Logger LOG = LoggerFactory.getLogger(CountFreq.class.getName());
 
+    abstract protected GenericUDAFEvaluator getMyEvaluator();
+
     @Override
     public GenericUDAFEvaluator getEvaluator(TypeInfo[] parameters) throws SemanticException {
         if (parameters.length != 1) {
@@ -39,7 +41,7 @@ abstract class CounterBase extends AbstractGenericUDAFResolver {
             case DECIMAL:
             case DATE:
             case TIMESTAMP:
-                return this.getEvaluator(parameters);
+                return this.getMyEvaluator();
             default:
                 throw new UDFArgumentTypeException(0, "Only numeric or date type arguments are accepted, but " + parameters[0].getCategory() + " is passed.");
         }

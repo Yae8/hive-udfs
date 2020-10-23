@@ -4,7 +4,6 @@ import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.parse.SemanticException;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDAFEvaluator;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
-import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
@@ -18,8 +17,13 @@ public class Mode extends CounterBase {
     static final Logger LOG = LoggerFactory.getLogger(Mode.class.getName());
 
     @Override
-    public GenericUDAFEvaluator getEvaluator(TypeInfo[] parameters) throws SemanticException {
+    protected GenericUDAFEvaluator getMyEvaluator() {
         return new ModeEvaluator();
+    }
+
+    @Override
+    public GenericUDAFEvaluator getEvaluator(TypeInfo[] parameters) throws SemanticException {
+        return super.getEvaluator(parameters);
     }
 
     public static class ModeEvaluator extends CounterEvaluatorBase {
