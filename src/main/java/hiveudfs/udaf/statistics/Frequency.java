@@ -135,6 +135,7 @@ public class Frequency extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void merge(AggregationBuffer agg, Object partial) throws HiveException {
             if (partial == null) {
                 return;
