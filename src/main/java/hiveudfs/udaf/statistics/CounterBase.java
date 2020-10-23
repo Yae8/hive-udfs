@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class Frequency extends AbstractGenericUDAFResolver {
+abstract class CounterBase extends AbstractGenericUDAFResolver {
 
-    static final Logger LOG = LoggerFactory.getLogger(Frequency.class.getName());
+    static final Logger LOG = LoggerFactory.getLogger(CountFreq.class.getName());
 
     @Override
     public GenericUDAFEvaluator getEvaluator(TypeInfo[] parameters) throws SemanticException {
@@ -39,13 +39,13 @@ public class Frequency extends AbstractGenericUDAFResolver {
             case DECIMAL:
             case DATE:
             case TIMESTAMP:
-                return new FrequencyEvaluator();
+                return this.getEvaluator(parameters);
             default:
                 throw new UDFArgumentTypeException(0, "Only numeric or date type arguments are accepted, but " + parameters[0].getCategory() + " is passed.");
         }
     }
 
-    public static class FrequencyEvaluator extends GenericUDAFEvaluator {
+    abstract static class CounterEvaluatorBase extends GenericUDAFEvaluator {
 
         // For PARTIAL1 and COMPLETE
         protected transient PrimitiveObjectInspector inputOI;
@@ -59,6 +59,9 @@ public class Frequency extends AbstractGenericUDAFResolver {
         protected Object[] partialResult;
 
         boolean warned = false;
+
+        abstract protected ObjectInspector getCompleteReturnType();
+        abstract protected ObjectInspector getFinalReturnType();
 
         @AggregationType(estimable = false)
         static class FrequencyAgg extends AbstractAggregationBuffer {
@@ -97,13 +100,9 @@ public class Frequency extends AbstractGenericUDAFResolver {
 
                 return ObjectInspectorFactory.getStandardStructObjectInspector(fieldName, fieldOI);
             } else if (m == Mode.COMPLETE) {
-                return ObjectInspectorFactory.getStandardMapObjectInspector(
-                        inputOI,
-                        PrimitiveObjectInspectorFactory.writableIntObjectInspector);
+                return this.getCompleteReturnType();
             } else {
-                return ObjectInspectorFactory.getStandardMapObjectInspector(
-                        mapperFieldOI.getMapKeyObjectInspector(),
-                        PrimitiveObjectInspectorFactory.writableIntObjectInspector);
+                return this.getFinalReturnType();
             }
         }
 
@@ -148,14 +147,6 @@ public class Frequency extends AbstractGenericUDAFResolver {
                 int count = myAgg.mapper.getOrDefault(key, 0);
                 myAgg.mapper.put(key, count + entry.getValue().get());
             }
-        }
-
-        @Override
-        public Object terminate(AggregationBuffer agg) throws HiveException {
-            FrequencyAgg myAgg = (FrequencyAgg) agg;
-            HashMap<Object, IntWritable> result = new HashMap<>(myAgg.mapper.size());
-            myAgg.mapper.forEach((k, v) -> result.put(k, new IntWritable(v)));
-            return result;
         }
     }
 }
