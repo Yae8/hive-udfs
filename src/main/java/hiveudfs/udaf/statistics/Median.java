@@ -292,6 +292,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Object terminatePartial(AggregationBuffer agg) throws HiveException {
             MedianDoubleAgg myAgg = (MedianDoubleAgg) agg;
 
@@ -301,6 +302,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void merge(AggregationBuffer agg, Object partial) throws HiveException {
             if (partial == null) {
                 return;
@@ -404,6 +406,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Object terminatePartial(AggregationBuffer agg) throws HiveException {
             MedianDecimalAgg myAgg = (MedianDecimalAgg) agg;
 
@@ -413,6 +416,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void merge(AggregationBuffer agg, Object partial) throws HiveException {
             if (partial == null) {
                 return;
@@ -518,6 +522,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Object terminatePartial(AggregationBuffer agg) throws HiveException {
             MedianDateAgg myAgg = (MedianDateAgg) agg;
 
@@ -527,6 +532,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void merge(AggregationBuffer agg, Object partial) throws HiveException {
             if (partial == null) {
                 return;
@@ -632,6 +638,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Object terminatePartial(AggregationBuffer agg) throws HiveException {
             MedianTimestampAgg myAgg = (MedianTimestampAgg) agg;
 
@@ -641,6 +648,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void merge(AggregationBuffer agg, Object partial) throws HiveException {
             if (partial == null) {
                 return;
