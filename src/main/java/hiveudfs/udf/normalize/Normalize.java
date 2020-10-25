@@ -1,9 +1,9 @@
 package hiveudfs.udf.normalize;
 
-import java.text.Normalizer;
-
 import org.apache.hadoop.hive.ql.exec.UDF;
 import org.apache.hadoop.io.Text;
+
+import java.text.Normalizer;
 
 public final class Normalize extends UDF {
     public Text evaluate(final Text s) {
