@@ -11,7 +11,7 @@ import org.apache.hadoop.io.IntWritable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
 
 public class CountFreq extends CounterBase {
 
@@ -39,15 +39,15 @@ public class CountFreq extends CounterBase {
         @Override
         protected ObjectInspector getFinalReturnType() {
             return ObjectInspectorFactory.getStandardMapObjectInspector(
-                    mapperFieldOI.getMapKeyObjectInspector(),
+                    counterFieldOI.getMapKeyObjectInspector(),
                     PrimitiveObjectInspectorFactory.writableIntObjectInspector);
         }
 
         @Override
         public Object terminate(AggregationBuffer agg) throws HiveException {
-            FrequencyAgg myAgg = (FrequencyAgg) agg;
-            HashMap<Object, IntWritable> result = new HashMap<>(myAgg.mapper.size());
-            myAgg.mapper.forEach((k, v) -> result.put(k, new IntWritable(v)));
+            CounterAgg myAgg = (CounterAgg) agg;
+            HashMap<Object, IntWritable> result = new HashMap<>(myAgg.counter.size());
+            myAgg.counter.forEach((k, v) -> result.put(k, new IntWritable(v)));
             return result;
         }
     }
