@@ -10,7 +10,9 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Map;
 
 public class Mode extends CounterBase {
 
@@ -37,13 +39,13 @@ public class Mode extends CounterBase {
         @Override
         protected ObjectInspector getFinalReturnType() {
             return PrimitiveObjectInspectorFactory.getPrimitiveWritableObjectInspector(
-                    ((PrimitiveObjectInspector) mapperFieldOI.getMapKeyObjectInspector()).getPrimitiveCategory());
+                    ((PrimitiveObjectInspector) counterFieldOI.getMapKeyObjectInspector()).getPrimitiveCategory());
         }
 
         @Override
         public Object terminate(AggregationBuffer agg) throws HiveException {
-            FrequencyAgg myAgg = (FrequencyAgg) agg;
-            Map.Entry<Object, Integer> maxEntry = Collections.max(myAgg.mapper.entrySet(), new Comparator<Map.Entry<Object, Integer>>() {
+            CounterAgg myAgg = (CounterAgg) agg;
+            Map.Entry<Object, Integer> maxEntry = Collections.max(myAgg.counter.entrySet(), new Comparator<Map.Entry<Object, Integer>>() {
                 @Override
                 public int compare(Map.Entry<Object, Integer> entry1, Map.Entry<Object, Integer> entry2) {
                     return entry1.getValue().compareTo(entry2.getValue());
