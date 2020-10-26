@@ -104,7 +104,7 @@ public class Strftime extends GenericUDF {
         switch (primitiveCategory) {
             case STRING:
                 String strDate = converters[0].convert(arguments[0].get()).toString();
-                pattern = DatePattern.matchPattern(strDate);
+                pattern = DatePatternEnum.matchPattern(strDate);
                 parser = new SimpleDateFormat(pattern);
                 try {
                     Date date = parser.parse(strDate);
