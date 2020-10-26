@@ -8,6 +8,8 @@ if (gitBranch == "master" | gitBranch == "dev") {
     ;
 } else if (feature_match.matches()) {
     version = feature_match.group(1) + '.0-SNAPSHOT'
+} else {
+    version = gitBranch + '.0-SNAPSHOT'
 }
 
 sourceCompatibility = 1.8
