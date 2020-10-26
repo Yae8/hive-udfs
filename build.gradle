@@ -2,6 +2,16 @@ apply plugin: 'java'
 
 version '1.0-SNAPSHOT'
 
+String gitBranch = ["sh", "-c", "cd ${project.rootDir} ; git rev-parse --abbrev-ref HEAD"].execute().in.text.trim()
+def feature_match = gitBranch =~ "feature_(.*)"
+if (gitBranch == "master" | gitBranch == "dev") {
+    ;
+} else if (feature_match.matches()) {
+    version = feature_match.group(1) + '.0-SNAPSHOT'
+} else {
+    version = gitBranch + '.0-SNAPSHOT'
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 

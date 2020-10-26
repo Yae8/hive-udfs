@@ -3,13 +3,7 @@ package hiveudfs.udf.date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-final class DatePatternType {
-    public static final int DATE = 1;
-    public static final int TIMESTAMP = 2;
-    public static final int TIMESTAMP_TZ = 3;
-}
-
-public enum DatePattern {
+public enum DatePatternEnum {
     DATE_NO_DASH("DATE_NO_DASH", "yyyyMMdd", DatePatternType.DATE),
     DATE_WITH_HYPHEN("DATE_WITH_HYPHEN", "yyyy-MM-dd", DatePatternType.DATE),
     DATE_WITH_SLASH("DATE_WITH_SLASH", "yyyy/MM/dd", DatePatternType.DATE),
@@ -31,7 +25,7 @@ public enum DatePattern {
     private final String pattern;
     private final int type;
 
-    DatePattern(String name, String pattern, int type) {
+    DatePatternEnum(String name, String pattern, int type) {
         this.name = name;
         this.pattern = pattern;
         this.type = type;
@@ -48,7 +42,7 @@ public enum DatePattern {
     }
 
     public static boolean isMember(String format) {
-        for (DatePattern dateFormat : values()) {
+        for (DatePatternEnum dateFormat : values()) {
             if (dateFormat.getPattern().equals(format)) {
                 return true;
             }
@@ -56,7 +50,7 @@ public enum DatePattern {
         return false;
     }
     public static boolean isMember(String format, int formatType) {
-        for (DatePattern dateFormat : values()) {
+        for (DatePatternEnum dateFormat : values()) {
             if (dateFormat.getType() == formatType && dateFormat.getPattern().equals(format)) {
                 return true;
             }
@@ -68,8 +62,8 @@ public enum DatePattern {
         if (text == null) {
             return null;
         }
-        for (DatePattern datePattern : values()) {
-            SimpleDateFormat formatter = new SimpleDateFormat(datePattern.getPattern());
+        for (DatePatternEnum DatePatternEnum : values()) {
+            SimpleDateFormat formatter = new SimpleDateFormat(DatePatternEnum.getPattern());
             String reformat = null;
             try {
                 reformat = formatter.format(formatter.parse(text));
@@ -77,7 +71,7 @@ public enum DatePattern {
                 e.printStackTrace();
             }
             if (text.equals(reformat)) {
-                return datePattern.getPattern();
+                return DatePatternEnum.getPattern();
             }
         }
         return null;
