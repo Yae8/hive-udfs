@@ -7,11 +7,17 @@ import org.apache.hadoop.hive.ql.parse.SemanticException;
 import org.apache.hadoop.hive.ql.udf.UDFType;
 import org.apache.hadoop.hive.ql.udf.generic.AbstractGenericUDAFResolver;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDAFEvaluator;
-import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
 import org.apache.hadoop.hive.serde2.io.DateWritable;
 import org.apache.hadoop.hive.serde2.io.DoubleWritable;
+import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
 import org.apache.hadoop.hive.serde2.io.TimestampWritable;
-import org.apache.hadoop.hive.serde2.objectinspector.*;
+import org.apache.hadoop.hive.serde2.objectinspector.ListObjectInspector;
+import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
+import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory;
+import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
+import org.apache.hadoop.hive.serde2.objectinspector.StandardListObjectInspector;
+import org.apache.hadoop.hive.serde2.objectinspector.StructField;
+import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.IntObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorUtils;
@@ -292,6 +298,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Object terminatePartial(AggregationBuffer agg) throws HiveException {
             MedianDoubleAgg myAgg = (MedianDoubleAgg) agg;
 
@@ -301,6 +308,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void merge(AggregationBuffer agg, Object partial) throws HiveException {
             if (partial == null) {
                 return;
@@ -404,6 +412,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Object terminatePartial(AggregationBuffer agg) throws HiveException {
             MedianDecimalAgg myAgg = (MedianDecimalAgg) agg;
 
@@ -413,6 +422,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void merge(AggregationBuffer agg, Object partial) throws HiveException {
             if (partial == null) {
                 return;
@@ -518,6 +528,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Object terminatePartial(AggregationBuffer agg) throws HiveException {
             MedianDateAgg myAgg = (MedianDateAgg) agg;
 
@@ -527,6 +538,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void merge(AggregationBuffer agg, Object partial) throws HiveException {
             if (partial == null) {
                 return;
@@ -632,6 +644,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Object terminatePartial(AggregationBuffer agg) throws HiveException {
             MedianTimestampAgg myAgg = (MedianTimestampAgg) agg;
 
@@ -641,6 +654,7 @@ public class Median extends AbstractGenericUDAFResolver {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void merge(AggregationBuffer agg, Object partial) throws HiveException {
             if (partial == null) {
                 return;
